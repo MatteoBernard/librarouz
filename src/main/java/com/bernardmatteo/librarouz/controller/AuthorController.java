@@ -1,8 +1,10 @@
 package com.bernardmatteo.librarouz.controller;
 
 import com.bernardmatteo.librarouz.model.Author;
+import com.bernardmatteo.librarouz.model.Book;
 import com.bernardmatteo.librarouz.response.Response;
 import com.bernardmatteo.librarouz.service.AuthorService;
+import com.bernardmatteo.librarouz.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,12 @@ import java.util.List;
 public class AuthorController {
 
     private final AuthorService authorService;
+    private final BookService bookService;
 
     @Autowired
-    public AuthorController(AuthorService authorService) {
+    public AuthorController(AuthorService authorService, BookService bookService) {
         this.authorService = authorService;
+        this.bookService = bookService;
     }
 
     @GetMapping
@@ -61,5 +65,19 @@ public class AuthorController {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
     }
+
+    @PostMapping("/{authorId}/books")
+    public ResponseEntity<Response> addBookToAuthor(@PathVariable Long authorId, @RequestBody Book book) {
+        bookService.addBookToAuthor(authorId, book);
+        Response response = new Response("Book added successfully", true);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{authorId}/books")
+    public List<Book> getBooksByAuthor(@PathVariable Long authorId) {
+        return bookService.getBooksByAuthor(authorId);
+    }
+
+
 
 }
